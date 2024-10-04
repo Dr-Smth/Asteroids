@@ -34,62 +34,99 @@ def main():
     asteroid_field = AsteroidField()
 
     pygame.font.init()
-    font = pygame.font.SysFont('Arial', 24)
+    font = pygame.font.SysFont("Arial", 24)
+
+    game_state = "running"  # Possible states: "running", "game_over"
+
+    def reset_game():
+        nonlocal player_score, updatable, drawable, asteroids, shots, player, asteroid_field
+
+        # Reset the score
+        player_score = 0
+
+        # Clear all sprite groups
+        updatable.empty()
+        drawable.empty()
+        asteroids.empty()
+        shots.empty()
+
+        # Reinitialize sprite groups and containers
+        Player.containers = (updatable, drawable)
+        Asteroid.containers = (asteroids, updatable, drawable)
+        AsteroidField.containers = updatable
+        Shot.containers = (shots, updatable, drawable)
+
+        # Recreate player and asteroid field
+        player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        asteroid_field = AsteroidField()
 
     while True:
-        for event in pygame.event.get():
+        events = pygame.event.get()  # Collect all events once per frame
+
+
+        for event in events:
             if event.type == pygame.QUIT:
                 return
-        screen.fill((0,0,0))
-
-        for object in updatable:
-            object.update(dt)
         
-        for asteroid in asteroids:
-            if asteroid.collision_check(player):
-                print("Game over!")
-                print(f"Player Score: {player_score} !!!")
-                if player_score == 0:
-                    print("Rank: Dishonorably Discharged!!!")
-                elif player_score <= 2500:
-                    print("Rank: Mate")
-                elif player_score <= 10000:
-                    print("Rank: Lieutenant")
-                elif player_score <= 25000:
-                    print("Rank: Commander")
-                elif player_score <= 50000:
-                    print("Rank: Captain")
-                elif player_score <= 75000:
-                    print("Rank: Commodore")
-                elif player_score <= 100000:
-                    print("Rank: Rear Admiral")
-                elif player_score <= 150000:
-                    print("Rank: Vice Admiral")
-                elif player_score <= 300000:
-                    print("Rank: Admiral")
-                elif player_score <= 500000:
-                    print("Rank: Admiral of the Fleet")
-                elif player_score <= 1000000:
-                    print("Rank: 1st Space Lord")
-                    print("Congratulations, you've mastered the game... maybe go play outside now?")
-                sys.exit()
+        if game_state == "running":
+            screen.fill((0,0,0))
 
-        for asteroid in asteroids:
-            for shot in shots:
-                if asteroid.collision_check(shot):
-                    player_score += asteroid.split()
-                    shot.kill()
+            for object in updatable:
+                object.update(dt)
+            
+            for asteroid in asteroids:
+                if asteroid.collision_check(player):
+                    game_state = "game_over"
+                    break
+
+            for asteroid in asteroids:
+                for shot in shots:
+                    if asteroid.collision_check(shot):
+                        player_score += asteroid.split()
+                        shot.kill()
 
 
-        for object in drawable:
-            object.draw(screen)
+            for object in drawable:
+                object.draw(screen)
 
-        # Render the score text
-        score_text = font.render(f"Score: {player_score}", True, (255, 255, 255))
+            # Render the score text
+            score_text = font.render(f"Score: {player_score}", True, (255, 255, 255))
 
-        # Blit the score text onto the screen at the desired position
-        screen.blit(score_text, (10, 10))
+            # Blit the score text onto the screen at the desired position
+            screen.blit(score_text, (10, 10))
 
+        elif game_state == "game_over":
+            # Fill the screen with a background color
+            screen.fill((0, 0, 0))
+
+            # Render the game over text
+            game_over_text = font.render("Game Over", True, (255, 0, 0))
+            score_text = font.render(f"Final Score: {player_score}", True, (255, 255, 255))
+            restart_text = font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
+
+             # Get rectangles for positioning
+            game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+            score_rect = score_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+            restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50))
+
+             # Blit the text onto the screen
+            screen.blit(game_over_text, game_over_rect)
+            screen.blit(score_text, score_rect)
+            screen.blit(restart_text, restart_rect)
+
+            # Handle events on game over screen
+            for event in events:
+                if event.type == pygame.QUIT:
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        # Restart the game
+                        reset_game()
+                        game_state = "running"
+                    elif event.key == pygame.K_q:
+                        # Quit the game
+                        return
+                    
         pygame.display.flip()
 
         # limit the framerate to 60 FPS
