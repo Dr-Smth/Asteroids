@@ -30,8 +30,11 @@ def main():
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
 
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / PLAYER_RADIUS)
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
+
+    pygame.font.init()
+    font = pygame.font.SysFont('Arial', 24)
 
     while True:
         for event in pygame.event.get():
@@ -80,6 +83,12 @@ def main():
 
         for object in drawable:
             object.draw(screen)
+
+        # Render the score text
+        score_text = font.render(f"Score: {player_score}", True, (255, 255, 255))
+
+        # Blit the score text onto the screen at the desired position
+        screen.blit(score_text, (10, 10))
 
         pygame.display.flip()
 
