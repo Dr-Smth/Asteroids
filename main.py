@@ -36,7 +36,7 @@ def main():
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 24)
 
-    game_state = "running"  # Possible states: "running", "game_over"
+    game_state = "start"  # Possible states: "start", "running", "game_over"
 
     def reset_game():
         nonlocal player_score, updatable, drawable, asteroids, shots, player, asteroid_field
@@ -68,7 +68,33 @@ def main():
             if event.type == pygame.QUIT:
                 return
         
-        if game_state == "running":
+        if game_state == "start":
+            # Fill the screen with a background color
+            screen.fill((0, 0, 0))
+
+            # Render the game title and instructions
+            title_text = font.render("Asteroids Game", True, (255, 255, 255))
+            instruction_text = font.render("Press ENTER to Start", True, (255, 255, 255))
+
+            # Get rectangles for positioning
+            title_rect = title_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+            instruction_rect = instruction_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+
+            # Blit the text onto the screen
+            screen.blit(title_text, title_rect)
+            screen.blit(instruction_text, instruction_rect)
+
+            # Handle events on start screen
+            for event in events:
+                if event.type == pygame.QUIT:
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        # Start the game
+                        reset_game()
+                        game_state = 'running'
+        
+        elif game_state == "running":
             screen.fill((0,0,0))
 
             for object in updatable:
