@@ -43,7 +43,7 @@ def main():
 
     def reset_game():
         nonlocal player_score, updatable, drawable, asteroids, shots, player, asteroid_field
-
+       
         # Reset the score
         player_score = 0
 
@@ -111,8 +111,6 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collision_check(player):
                     game_state = "game_over"
-                    if player_score > high_score:
-                        high_score = player_score
                     break
 
             # Shot - Asteroid collision detection and handeling
@@ -136,19 +134,24 @@ def main():
             screen.fill((0, 0, 0))
 
             # Render the game over text
-            game_over_text = font.render("Game Over!!!", True, (255, 0, 0))
+            game_over_text = font.render("Game Over !!!", True, (255, 0, 0))
             score_text = font.render(f"Final Score: {player_score}", True, (255, 255, 255))
             restart_text = font.render("Press R to Restart, M for Menu, or Q to Quit", True, (255, 255, 255))
+            well_done_text = font.render("Well Done, You've set a new High Score !!!", True, (255, 255, 255))
 
              # Get rectangles for positioning
             game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
             score_rect = score_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
             restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50))
+            well_done_rect = well_done_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100))
 
              # Blit the text onto the screen
             screen.blit(game_over_text, game_over_rect)
             screen.blit(score_text, score_rect)
             screen.blit(restart_text, restart_rect)
+            if player_score > high_score:
+                screen.blit(well_done_text, well_done_rect)
+
 
             # Handle events on game over screen
             for event in events:
@@ -157,9 +160,13 @@ def main():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         # Restart the game
+                        if player_score > high_score:
+                            high_score = player_score
                         reset_game()
                         game_state = "running"
                     elif event.key ==pygame.K_m:
+                        if player_score > high_score:
+                            high_score = player_score
                         reset_game()
                         game_state = "start"
                     elif event.key == pygame.K_q:
