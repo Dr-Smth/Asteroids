@@ -20,11 +20,13 @@ def main():
 
     player_score = 0
 
+     # Initialize sprite groups
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
 
+    # Assign sprite groups to class-level containers
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
@@ -95,16 +97,19 @@ def main():
                         game_state = 'running'
         
         elif game_state == "running":
+            # Fill the screen with a background color
             screen.fill((0,0,0))
 
             for object in updatable:
                 object.update(dt)
             
+            # Player - Asteroid collision detection and handeling
             for asteroid in asteroids:
                 if asteroid.collision_check(player):
                     game_state = "game_over"
                     break
 
+            # Shot - Asteroid collision detection and handeling
             for asteroid in asteroids:
                 for shot in shots:
                     if asteroid.collision_check(shot):
@@ -117,7 +122,6 @@ def main():
 
             # Render the score text
             score_text = font.render(f"Score: {player_score}", True, (255, 255, 255))
-
             # Blit the score text onto the screen at the desired position
             screen.blit(score_text, (10, 10))
 
@@ -126,9 +130,9 @@ def main():
             screen.fill((0, 0, 0))
 
             # Render the game over text
-            game_over_text = font.render("Game Over", True, (255, 0, 0))
+            game_over_text = font.render("Game Over!!!", True, (255, 0, 0))
             score_text = font.render(f"Final Score: {player_score}", True, (255, 255, 255))
-            restart_text = font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
+            restart_text = font.render("Press R to Restart, M for Menu, or Q to Quit", True, (255, 255, 255))
 
              # Get rectangles for positioning
             game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
@@ -149,6 +153,9 @@ def main():
                         # Restart the game
                         reset_game()
                         game_state = "running"
+                    elif event.key ==pygame.K_m:
+                        reset_game()
+                        game_state = "start"
                     elif event.key == pygame.K_q:
                         # Quit the game
                         return
