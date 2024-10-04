@@ -81,7 +81,7 @@ def main():
             screen.fill((0, 0, 0))
 
             # Render the game title, instructions, and high score
-            title_text = font.render("Asteroids Game", True, (255, 255, 255))
+            title_text = font.render("Asteroids !!!", True, (255, 255, 255))
             instruction_text = font.render("Press ENTER to Start", True, (255, 255, 255))
             high_score_text = font.render(f"High Score: {high_score}", True, (255, 255, 255))
 

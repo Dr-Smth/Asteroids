@@ -71,6 +71,5 @@ class Player(CircleShape):
     def shoot(self):
         # Create a new shot at the player's position
         new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
-
         # sets, rotates, and scales up the shot velocity vector
         new_shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
