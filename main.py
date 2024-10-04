@@ -19,6 +19,7 @@ def main():
     dt = 0
 
     player_score = 0
+    high_score = 0
 
      # Initialize sprite groups
     updatable = pygame.sprite.Group()
@@ -74,17 +75,20 @@ def main():
             # Fill the screen with a background color
             screen.fill((0, 0, 0))
 
-            # Render the game title and instructions
+            # Render the game title, instructions, and high score
             title_text = font.render("Asteroids Game", True, (255, 255, 255))
             instruction_text = font.render("Press ENTER to Start", True, (255, 255, 255))
+            high_score_text = font.render(f"High Score: {high_score}", True, (255, 255, 255))
 
             # Get rectangles for positioning
             title_rect = title_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
             instruction_rect = instruction_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+            high_score_rect = high_score_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50))
 
             # Blit the text onto the screen
             screen.blit(title_text, title_rect)
             screen.blit(instruction_text, instruction_rect)
+            screen.blit(high_score_text, high_score_rect)
 
             # Handle events on start screen
             for event in events:
@@ -94,7 +98,7 @@ def main():
                     if event.key == pygame.K_RETURN:
                         # Start the game
                         reset_game()
-                        game_state = 'running'
+                        game_state = "running"
         
         elif game_state == "running":
             # Fill the screen with a background color
@@ -107,6 +111,8 @@ def main():
             for asteroid in asteroids:
                 if asteroid.collision_check(player):
                     game_state = "game_over"
+                    if player_score > high_score:
+                        high_score = player_score
                     break
 
             # Shot - Asteroid collision detection and handeling
