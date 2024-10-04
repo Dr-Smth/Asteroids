@@ -16,8 +16,10 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
     
+    # Initiates delta time variable
     dt = 0
 
+    # Initiates player score and high score variables
     player_score = 0
     high_score = 0
 
@@ -33,9 +35,11 @@ def main():
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
 
+    # Initiates player and astroid field
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
 
+    # Initiates game font for on screen text
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 24)
 
@@ -64,13 +68,14 @@ def main():
         asteroid_field = AsteroidField()
 
     while True:
-        events = pygame.event.get()  # Collect all events once per frame
+        events = pygame.event.get()  # Collects all events once per frame
 
-
+        # quits the game if user slects teh "x" button
         for event in events:
             if event.type == pygame.QUIT:
                 return
         
+        # --- Start screen logic ---
         if game_state == "start":
             # Fill the screen with a background color
             screen.fill((0, 0, 0))
@@ -100,6 +105,7 @@ def main():
                         reset_game()
                         game_state = "running"
         
+        # --- Main game logic ---
         elif game_state == "running":
             # Fill the screen with a background color
             screen.fill((0,0,0))
@@ -120,7 +126,7 @@ def main():
                         player_score += asteroid.split()
                         shot.kill()
 
-
+            # Draws all drawable objects to the screen
             for object in drawable:
                 object.draw(screen)
 
@@ -129,6 +135,7 @@ def main():
             # Blit the score text onto the screen at the desired position
             screen.blit(score_text, (10, 10))
 
+        # --- Game over screen logic ---
         elif game_state == "game_over":
             # Fill the screen with a background color
             screen.fill((0, 0, 0))

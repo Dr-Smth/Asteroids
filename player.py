@@ -3,12 +3,14 @@ from circleshape import *
 from constants import *
 from shot import *
 
+# --- Player class logic ---
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.cooldown = 0
     
+    # creates the player ship shape
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
@@ -17,12 +19,15 @@ class Player(CircleShape):
         c = self.position - forward * self.radius + right
         return [a, b, c]
 
+    # enables the player ship shape to be drawn to the screen
     def draw(self, screen):
         pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)
 
+    # enables the player ship shape to rotate
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
+    # enables the player ship to be updated
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
@@ -57,10 +62,12 @@ class Player(CircleShape):
             else:
                 self.cooldown = 0
     
+    # enables the player ship to move
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
 
+    # creates a new shot when called
     def shoot(self):
         # Create a new shot at the player's position
         new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
